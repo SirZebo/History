@@ -3,9 +3,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Main {
     public static void main(String[] args) {
         int n = 20;
-        Percolation nodeState = new Percolation(n);
-        while (!nodeState.percolates()) {
-            nodeState.open(Random(n - 1), Random(n - 1));
+        Percolation nodeState = new Percolation(n); // Create a n by n array
+        while (!nodeState.percolates()) { //  The program keeps opening new nodes until the top touches the bottom
+            nodeState.open(Random(n - 1), Random(n - 1)); //  opens random nodes 
             System.out.println("Open " + nodeState.numberOfOpenSites());
         }
         float openSites = nodeState.numberOfOpenSites();
