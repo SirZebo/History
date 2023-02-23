@@ -18,6 +18,12 @@ public class Main {
         Shell<Point2D> b = new Shell<>(arrayB);
         a.sort();
         b.sort();
+        for (Point2D points : a.arr) {
+            System.out.println("x: " + points.x + " y: " + points.y);
+        }
+        for (Point2D points : b.arr) {
+            System.out.println("x: " + points.x + " y: " + points.y);
+        }
     }
 }
 public class Point2D implements Comparable<Point2D> { //  You want to compare datatype to itself, so Comparable<Datatype>
