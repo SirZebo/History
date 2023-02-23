@@ -1,25 +1,23 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main {
     public static void main(String[] args) {
-        List<Point2D> a = new ArrayList<>();
-        a.add(new Point2D(1, 1));
-        a.add(new Point2D(2, 1));
-        a.add(new Point2D(3, 1));
-        a.add(new Point2D(4, 1));
-        a.add(new Point2D(5, 1));
-        List<Point2D> b = new ArrayList<>();
-        b.add(new Point2D(1, 1));
-        b.add(new Point2D(2, 1));
-        b.add(new Point2D(3, 1));
-        b.add(new Point2D(-4, 1));
-        b.add(new Point2D(-5, 1));
-        Point2D[] ArrayA = a.toArray(new Point2D[5]);
-        Point2D[] ArrayB = b.toArray(new Point2D[5]);
-        
-    }
-}
+        Point2D[] arrayA = new Point2D[5];
+        arrayA[0] = new Point2D(5, 1);
+        arrayA[1] = new Point2D(1, 1);
+        arrayA[2] = new Point2D(4, 1);
+        arrayA[3] = new Point2D(2, 1);
+        arrayA[4] = new Point2D(3, 1);
+
+        Point2D[] arrayB = new Point2D[5];
+        arrayB[0] = new Point2D(1, 1);
+        arrayB[1] = new Point2D(2, 1);
+        arrayB[2] = new Point2D(3, 1);
+        arrayB[3] = new Point2D(-4, 1);
+        arrayB[4] = new Point2D(-5, 1);
+
+        Shell<Point2D> a = new Shell<>(arrayA);
+        Shell<Point2D> b = new Shell<>(arrayB);
+        a.sort();
+        b.sort();
 public class Point2D {
     private final double x;
     private final double y;
@@ -29,6 +27,7 @@ public class Point2D {
         this.y = y;
     }
 }
+        
 public class Shell<T extends Comparable<T>> {
     public static void sort(Comparable[] a) {
         int N = a.length;
