@@ -20,7 +20,7 @@ public class Main {
         b.sort();
     }
 }
-public class Point2D implements Comparable<Point2D> {
+public class Point2D implements Comparable<Point2D> { //  You want to compare datatype to itself, so Comparable<Datatype>
     public final double x;
     public final double y;
 
@@ -46,30 +46,32 @@ public class Point2D implements Comparable<Point2D> {
 }
         
 public class Shell<T extends Comparable<T>> {
-    public static void sort(Comparable[] a) {
-        int N = a.length;
+    public T[] arr;
+
+    public Shell(T[] arr) {
+        this.arr = arr;
+    }
+
+    public void sort() {
+        int N = arr.length;
         int h = 1;
         while (h < N / 3) {
             h = 3 * h + 1;
         }
         while (h >= 1) {
             for (int i = h; i < N; i++) {
-                for (int j = i; j >= h && less(a[j], a[j - h]); j -= h) {
-
+                for (int j = i; j >= h && arr[j].compareTo(arr[j - h]) < 0; j -= h) {
+                    exch(arr, j, j - h);
                 }
             }
             h = h / 3;
         }
     }
 
-    private static boolean less(Comparable v, Comparable w) {
-        return v.compareTo(w) < 0;
-    }
-
-    private static void exch(Comparable[] a, int i, int j) {
-        Comparable swap = a[i];
-        a[i] = a[j];
-        a[j] = swap;
+    private void exch(T[] arr, int i, int j) {
+        T swap = arr[i];
+        arr[i] = arr[j];
+        arr[j] = swap;
     }
 
 }
