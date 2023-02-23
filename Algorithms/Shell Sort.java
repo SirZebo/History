@@ -20,13 +20,28 @@ public class Main {
         b.sort();
     }
 }
-public class Point2D {
-    private final double x;
-    private final double y;
+public class Point2D implements Comparable<Point2D> {
+    public final double x;
+    public final double y;
 
     public Point2D(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public int compareTo(Point2D temp) {
+        Point2D other = (Point2D) temp;
+        if (this.x > other.x) {
+            return 1;
+        } else if (this.x < other.x) {
+            return -1;
+        } else if (this.y > other.y) {
+            return 1;
+        } else if (this.y < other.y) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }
         
