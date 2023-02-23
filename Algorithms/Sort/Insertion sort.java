@@ -1,39 +1,30 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-
 public class Main {
     public static void main(String[] args) {
-        List<Integer> intList = new ArrayList<>();
-        intList.add(5);
-        intList.add(7);
-        intList.add(1);
-        intList.add(4);
-        intList.add(2);
-        intList.add(3);
-        intList.add(9);
-        intList.add(8);
-        int[] intArray = intList.stream()
-                .mapToInt(Integer::intValue)
-                .toArray();
-        Integer[] integerArray = IntStream.of(intArray).boxed().toArray(Integer[]::new);
-        int size = integerArray.length;
 
-        InsertionSort<Integer> arr = new InsertionSort<>(intList);
+        Integer[] intArray = new Integer[8];
+        intArray[0] = 3;
+        intArray[1] = 1;
+        intArray[2] = 8;
+        intArray[3] = 7;
+        intArray[4] = 2;
+        intArray[5] = 5;
+        intArray[6] = 4;
+        intArray[7] = 0;
+        InsertionSort<Integer> arr = new InsertionSort<>(intArray);
         arr.sort();
-        for (int i = 0; i < size; i++) {
-            System.out.println(arr[i]);
+        for (int num : arr.arr) {
+            System.out.println(num);
         }
     }
-
-
 }
+
 public class InsertionSort<T extends Comparable<T>> {
+
+    public T[] arr;
+
     public InsertionSort(T[] arr) {
         this.arr = arr;
     }
-
-    private final T[] arr;
 
     public void sort() {
         int N = arr.length;
@@ -43,13 +34,15 @@ public class InsertionSort<T extends Comparable<T>> {
             while (j > 0 &&
                     arr[j].compareTo(arr[j - 1]) < 0) // Excluding sorted items, check every non-sorted items
             {
-                T swap = arr[i];
-                arr[i] = arr[j - 1];
+                T swap = arr[j];
+                arr[j] = arr[j - 1];
                 arr[j - 1] = swap;
                 j--;
             }
         }
     }
+
+
 
     /*
     public static void sortV1(T[] a) {
@@ -82,15 +75,14 @@ public class InsertionSort<T extends Comparable<T>> {
         for (int i = 1; i < N; i++) // For N items to sort
         {
             for (int j = i; j > 0
-                    && arr[j].compareTo(arr[j - 1] < 0); j--) // Excluding sorted items, check every non-sorted items
+                    && arr[j].compareTo(arr[j - 1]) < 0; j--) // Excluding sorted items, check every non-sorted items
             {
-                T swap = arr[i];
-                arr[i] = arr[j - 1];
+                T swap = arr[j];
+                arr[j] = arr[j - 1];
                 arr[j - 1] = swap;
             }
         }
     }
-    */
 
-
+     */
 }
