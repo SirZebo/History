@@ -18,6 +18,8 @@ public class Main {
         Shell<Point2D> b = new Shell<>(arrayB);
         a.sort();
         b.sort();
+    }
+}
 public class Point2D {
     private final double x;
     private final double y;
