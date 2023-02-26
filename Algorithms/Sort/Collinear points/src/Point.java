@@ -85,9 +85,10 @@ public class Point implements Comparable<Point> {
     private class slopeOrder implements Comparator<Point> { // New comparator object (slopeOrder)
 
         public int compare(Point a, Point b) { // Compare 2 points (a, b) with respect to this point.
-            if (slopeTo(a) < slopeTo(b)) return -1;
+            if (abs(slopeTo(a) - slopeTo(b)) <= 1e-6) return 0;
+            else if (slopeTo(a) < slopeTo(b)) return -1;
             else if (slopeTo(a) > slopeTo(b)) return 1;
-            else return 0;
+            else throw new ArithmeticException();
         }
     }
 
