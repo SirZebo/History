@@ -5,7 +5,7 @@ public class Main {
         pointArray[1] = new Point(5, 1);
         pointArray[2] = new Point(1, 1);
         pointArray[3] = new Point(1, -1);
-        pointArray[4] = new Point(4, -1);
+        pointArray[4] = new Point(4, -4);
         pointArray[5] = new Point(-1, -1);
         pointArray[6] = new Point(-1, -4);
         pointArray[7] = new Point(-3, -3);
@@ -15,7 +15,11 @@ public class Main {
         pointArray[11] = new Point(-1, 4);
         BruteCollinearPoints arr = new BruteCollinearPoints(pointArray);
         System.out.println(arr.numberOfSegments());
+        for (LineSegment line : arr.segments()) {
+
+            System.out.println((line.getPointP()).slopeTo(line.getPointQ()));
+
+        }
     }
 }
-
 
