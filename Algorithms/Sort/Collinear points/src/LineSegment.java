@@ -44,6 +44,11 @@ public class LineSegment implements Comparable<LineSegment> {
         else return 0;
     }
     
+    public boolean equals(LineSegment that) {
+        return (this.p.equals(that.p))
+                && (this.q.equals(that.q));
+    }
+    
     
     
     /*
