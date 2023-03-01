@@ -18,6 +18,14 @@ public class LineSegment {
         this.p = p;
         this.q = q;
     }
+    
+    public Point getPointP() {
+        return p;
+    }
+
+    public Point getPointQ() {
+        return q;
+    }
 
     /**
      * Returns a string representation of this point.
