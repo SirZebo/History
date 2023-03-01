@@ -13,10 +13,10 @@ public class Main {
         pointArray[9] = new Point(-4, 1);
         pointArray[10] = new Point(-2, 2);
         pointArray[11] = new Point(-1, 4);
-        BruteCollinearPoints arr = new BruteCollinearPoints(pointArray);
-        System.out.println(arr.numberOfSegments());
+        FastCollinearPoints arr = new FastCollinearPoints(pointArray);
+        System.out.println("Number of collinear points: " + arr.numberOfSegments());
         for (LineSegment line : arr.segments()) {
-
+            System.out.println(line);
             System.out.println((line.getPointP()).slopeTo(line.getPointQ()));
 
         }
