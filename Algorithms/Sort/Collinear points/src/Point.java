@@ -103,4 +103,8 @@ public class Point implements Comparable<Point> {
     public String toString() {
         return "(" + x + ", " + y + " )";
     }
+    
+    public boolean equals(Point that) {
+        return (this.x == that.x && this.y == that.y);
+    }
 }
