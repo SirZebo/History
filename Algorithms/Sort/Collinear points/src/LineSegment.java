@@ -1,4 +1,4 @@
-public class LineSegment {
+public class LineSegment implements Comparable<LineSegment> {
 
     private final Point p;
     private final Point q;
@@ -37,6 +37,15 @@ public class LineSegment {
     public String toString() {                 // string representation
         return p.toString() + " ---> " + q.toString();
     }
+    
+    public int compareTo(LineSegment that) {
+        if ((this.p).slopeTo(this.q) < (that.p).slopeTo(that.q)) return -1;
+        if ((this.p).slopeTo(this.q) > (that.p).slopeTo(that.q)) return 1;
+        else return 0;
+    }
+    
+    
+    
     /*
     public   void draw()                        // draws this line segment
      */
