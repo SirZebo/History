@@ -58,12 +58,12 @@ public class FastCollinearPoints {
                 collinearCounterIndex++; // Min segment = {p, i-2, i-1, i}. Content is p + start ---> i
             } else if (collinearCounterIndex > 0) { // If next point is not collinear && previous is collinear. Add segment to array
                 //  getCollinearSegment(pointArray, p, int start, int i); // Create collinear segment
-                collinearSegmentArrayList.add(getCollinearSegment(pointArray, p, i - 3, i - 1));  // add segment
+                collinearSegmentArrayList.add(getCollinearSegment(pointArray, p, i - (2 + collinearCounterIndex), i - 1));  // add segment. Min segment should be {p, i - 3, i - 2, i - 1}
                 collinearCounterIndex = 0;
             }
         }
         if (collinearCounterIndex > 0) { // If next point is not collinear && previous is collinear. Add segment to array
-            collinearSegmentArrayList.add(getCollinearSegment(pointArray, p, tempPointArraySorted.length - 3, tempPointArraySorted.length - 1));  // add segment
+            collinearSegmentArrayList.add(getCollinearSegment(pointArray, p, tempPointArraySorted.length - (2 + collinearCounterIndex), tempPointArraySorted.length - 1));  // add segment
         }
     }
 
