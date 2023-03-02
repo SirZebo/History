@@ -51,21 +51,19 @@ public class FastCollinearPoints {
      * @param collinearSegmentArrayList returns collinear segments
      */
     private void CollinearSegments(Point[] tempPointArraySorted, Point p, ArrayList<LineSegment> collinearSegmentArrayList) {
-        int collinearSegmentStart = 0;
-        int collinearSegmentLength = -1;
+        int collinearCounterIndex = 0;
         for (int i = 3; i < tempPointArraySorted.length; i++) {
             if (p.slopeOrder().compare(tempPointArraySorted[i - 2], tempPointArraySorted[i - 1]) == 0
                     && p.slopeOrder().compare(tempPointArraySorted[i - 1], tempPointArraySorted[i]) == 0) {
-                collinearSegmentStart = i - 2 - ++collinearSegmentLength; // Min segment = {p, i-2, i-1, i}. Content is p + start ---> i
-            }
-            if (collinearSegmentLength > -1) { // If next point is not collinear && previous is collinear. Add segment to array
+                collinearCounterIndex++; // Min segment = {p, i-2, i-1, i}. Content is p + start ---> i
+            } else if (collinearCounterIndex > 0) { // If next point is not collinear && previous is collinear. Add segment to array
                 //  getCollinearSegment(pointArray, p, int start, int i); // Create collinear segment
-                collinearSegmentArrayList.add(getCollinearSegment(pointArray, p, collinearSegmentStart, i));  // add segment
-                // Check duplicate segment
-
-                collinearSegmentLength = -1;
-
+                collinearSegmentArrayList.add(getCollinearSegment(pointArray, p, i - 3, i - 1));  // add segment
+                collinearCounterIndex = 0;
             }
+        }
+        if (collinearCounterIndex > 0) { // If next point is not collinear && previous is collinear. Add segment to array
+            collinearSegmentArrayList.add(getCollinearSegment(pointArray, p, tempPointArraySorted.length - 3, tempPointArraySorted.length - 1));  // add segment
         }
     }
 
