@@ -18,25 +18,23 @@ public class FastCollinearPoints {
         }
 
         // 2. Check for duplicate points
-        Mergesort<Point> tempPointArray = new Mergesort<>(pointArray);
-        tempPointArray.sort();
-        Point[] tempPointArraySorted = tempPointArray.getArr();
-        this.pointArray = tempPointArray.getArr();
+        this.pointArray = pointArray;
+        Arrays.sort(pointArray);
+        //new Mergesort<>(pointArray).sort();
         CheckDuplicatePoints();
 
         // 3. For each point sort by slope and check for collinear
         ArrayList<LineSegment> collinearSegmentArrayList = new ArrayList<>();
         if (pointArray.length > 3) {
             for (Point p : pointArray) {
-                Arrays.sort(tempPointArraySorted, p.slopeOrder());
-                CollinearSegments(tempPointArraySorted, p, collinearSegmentArrayList);
+                Arrays.sort(pointArray, p.slopeOrder());
+                CollinearSegments(pointArray, p, collinearSegmentArrayList);
             }
         }
 
         // 4. Check for duplicate collinear
         collinearSegmentArrayList = CheckDuplicateSegment(collinearSegmentArrayList);
         segments = collinearSegmentArrayList.toArray(new LineSegment[collinearSegmentArrayList.size()]);
-
     }
 
     /**
@@ -66,7 +64,7 @@ public class FastCollinearPoints {
             collinearSegmentArrayList.add(getCollinearSegment(pointArray, p, tempPointArraySorted.length - (2 + collinearCounterIndex), tempPointArraySorted.length - 1));  // add segment
         }
     }
-
+    
     /**
      * Generate a segment where segment is p + start ---> i. Example {p, i-2, i-1, i}.
      * <br>
@@ -85,13 +83,9 @@ public class FastCollinearPoints {
         for (int i = start; i < end + 1; i++) {
             temp[tempIndex++] = pointArray[i];
         }
-
-        /*
-        Mergesort<Point> sortArray = new Mergesort<>(temp);
-        sortArray.sort();
-        temp = sortArray.getArr();
-        */
+        //new Mergesort<>(pointArray).sort();
         Arrays.sort(temp);
+
         return new LineSegment(temp[0], temp[temp.length - 1]);
     }
 
@@ -103,13 +97,8 @@ public class FastCollinearPoints {
      * @return distinct collinear segments
      */
     private ArrayList<LineSegment> CheckDuplicateSegment(ArrayList<LineSegment> segmentArrayList) {
-
         LineSegment[] segmentArray = segmentArrayList.toArray(new LineSegment[segmentArrayList.size()]);
-        /*
-        Mergesort sorted = new Mergesort<>(segmentArray);
-        sorted.sort();
-        segmentArray = (LineSegment[]) sorted.getArr();
-        */
+        //new Mergesort<>(pointArray).sort();
         Arrays.sort(segmentArray);
         ArrayList<LineSegment> temp = new ArrayList<>();
         temp.add(segmentArray[0]);
@@ -145,6 +134,5 @@ public class FastCollinearPoints {
     public LineSegment[] segments() {               // the line segments
         return segments;
     }
-
-
 }
+
