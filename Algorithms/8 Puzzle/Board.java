@@ -119,23 +119,26 @@ public class Board implements IBoard {
         return neighbors;
     }
 
-    public Board twin() { // generate a random valid swap with empty tile("0")
+    public Board twin() { // Make the board unsolvable by swapping 2 tiles, empty tile 0 is not a tile
         int[] twinTiles = null;
+        int randomSelect1;
         Random rand = new Random();
 
-        int emptyTileIndex = emptyTileIndex(board);
-        boolean[] usableSwap = swapLegality(emptyTileIndex);
+        do randomSelect1 = rand.nextInt(9);
+        while (board[randomSelect1] == 0);
 
+        boolean[] usableSwap = swapLegality(randomSelect1);
         while (twinTiles == null) {
-            int randomSelect = rand.nextInt(3);
-            if (usableSwap[randomSelect]) {
-                twinTiles = board.clone();
-                if (randomSelect == 0) randomSelect = emptyTileIndex - 3; // Up 1 row
-                else if (randomSelect == 1) randomSelect = emptyTileIndex + 3; // Down 1 row
-                else if (randomSelect == 2) randomSelect = emptyTileIndex - 1; // Left 1 column
-                else if (randomSelect == 3) randomSelect = emptyTileIndex + 1; // Right 1 column
+            int randomSelect2 = rand.nextInt(4);
+            if (usableSwap[randomSelect2]) {
+                if (randomSelect2 == 0) randomSelect2 = randomSelect1 - 3; // Up 1 row
+                else if (randomSelect2 == 1) randomSelect2 = randomSelect1 + 3; // Down 1 row
+                else if (randomSelect2 == 2) randomSelect2 = randomSelect1 - 1; // Left 1 column
+                else if (randomSelect2 == 3) randomSelect2 = randomSelect1 + 1; // Right 1 column
                 else throw new ArrayIndexOutOfBoundsException("randomSelect is out of bound");
-                swap(twinTiles, emptyTileIndex, randomSelect);
+                if (board[randomSelect2] == 0) continue; // Re-roll if select 0
+                twinTiles = board.clone();
+                swap(twinTiles, randomSelect1, randomSelect2);
             }
         }
         return new Board(twinTiles);
