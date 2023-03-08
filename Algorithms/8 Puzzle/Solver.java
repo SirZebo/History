@@ -7,26 +7,35 @@ public class Solver {
     private Board goal = new Board(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 0});
     // find a solution to the initial board (using the A* algorithm)
     private int minMoves;
+    private boolean solvable;
 
     public Solver(Board initial) {
         if (initial == null) throw new IllegalArgumentException();
 
         //First, insert the initial search node (the initial board, 0 moves, and a null previous search node) into a priority queue.
         int moves = 0;
+        int movesTwin = 0;
         SearchNode searchNode = new SearchNode(initial, moves, null);
+        SearchNode searchNodeTwin = new SearchNode(initial.twin(), moves, null);
         MinimumHeap<SearchNode> searchNodes = new MinimumHeap<>();
+        MinimumHeap<SearchNode> searchNodesTwin = new MinimumHeap<>();
 
 
         searchNodes.insert(searchNode);
+        searchNodesTwin.insert(searchNodeTwin);
         Queue<Board> neighbors = new LinkedList<Board>();
+        Queue<Board> neighborsTwin = new LinkedList<Board>();
 
         boolean solved = false;
         boolean twinSolved = false;
         while (!solved && !twinSolved) {
             // Then, delete from the priority queue the search node with the minimum priority
             SearchNode current = searchNodes.getRoot();
+            SearchNode currentTwin = searchNodesTwin.getRoot();
             Board temp = current.getBoard();
+            Board tempTwin = currentTwin.getBoard();
             int move = current.getMoves() + 1;
+            int moveTwin = currentTwin.getMoves() + 1;
 
 
             //System.out.println("Moves: " + current.getMoves() + " ,Manhattan: " + temp.manhattan());
@@ -35,6 +44,11 @@ public class Solver {
             if (temp.equals(this.goal)) {
                 this.minMoves = current.getMoves();
                 lastNode = current; // Something like singly linked list
+                solved = true;
+                break;
+            }
+            if (tempTwin.equals(this.goal)) {
+                twinSolved = true;
                 break;
             }
 
@@ -45,12 +59,20 @@ public class Solver {
                     searchNodes.insert(new SearchNode(neighbor, move, current));
                 }
             }
+            for (Board neighborTwin : tempTwin.neighbors()) {
+                if (currentTwin.getParent() == null || !(neighborTwin).equals(currentTwin.getParent().getBoard())) {
+                    neighborsTwin.add(neighborTwin);
+                    searchNodesTwin.insert(new SearchNode(neighborTwin, moveTwin, currentTwin));
+                }
+            }
         }
+        solvable = !twinSolved;
+        if (!solvable) this.minMoves = -1;
     }
 
     // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        return true;
+        return solvable;
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
@@ -60,13 +82,11 @@ public class Solver {
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        if (!isSolvable()) return null;
+        if (!isSolvable()) {System.out.println("Not solvable"); return null;}
         Stack<Board> boards = new Stack<>();
         SearchNode lastNode = this.lastNode;
         while (lastNode.getParent() != null) {
             boards.push(lastNode.getBoard());
-            //System.out.println("Moves: " + lastNode.getMoves());
-            //System.out.println(lastNode.getBoard());
             lastNode = lastNode.getParent();
         }
         return boards;
