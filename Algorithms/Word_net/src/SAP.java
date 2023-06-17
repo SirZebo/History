@@ -8,9 +8,9 @@ public class SAP {
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
-        this.G = G;
+        this.G = G.reverse();
         sapLengthMap = new HashMap<>();
-        this.ancestors = topologicalSort(G);
+        this.ancestors = topologicalSort(this.G);
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
@@ -142,8 +142,6 @@ public class SAP {
         G.addEdge(21, 16);
         G.addEdge(22, 16);
 
-
-        G = G.reverse();
         SAP sap = new SAP(G);
         List<Integer> v = new ArrayList<>();
         v.add(13);
