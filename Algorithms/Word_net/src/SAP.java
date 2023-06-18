@@ -6,12 +6,16 @@ public class SAP {
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
-        this.G = G;
+        if (G == null) throw new IllegalArgumentException("SAP: digraph cannot be null!");
+        this.G = G; // maybe use copy contructor?
         this.sapMap = new HashMap<>();
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
+        doesVertexExist(v);
+        doesVertexExist(w);
+
         if (!sapMap.containsKey(Map.entry(v, w))) {
             sap(v, w);
         }
@@ -20,6 +24,9 @@ public class SAP {
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
+        doesVertexExist(v);
+        doesVertexExist(w);
+
         if (!this.sapMap.containsKey(Map.entry(v, w))) {
             sap(v, w);
         }
@@ -29,6 +36,8 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> vSet, Iterable<Integer> wSet) {
+        doesVertexExist(vSet);
+        doesVertexExist(wSet);
 
         TreeMap<Integer, Integer> sapLengthMap = new TreeMap<>(); // TreeMap<Length, Ancestor>
         for (int v : vSet) {
@@ -41,6 +50,9 @@ public class SAP {
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> vSet, Iterable<Integer> wSet) {
+        doesVertexExist(vSet);
+        doesVertexExist(wSet);
+
         TreeMap<Integer, Integer> sapLengthMap = new TreeMap<>(); // TreeMap<Length, Ancestor>
         for (int v : vSet) {
             for (int w : wSet) {
@@ -93,7 +105,19 @@ public class SAP {
         }
         return vDistances;
     }
-    
+
+    private void doesVertexExist(int vertex) {
+        if (vertex < 0 || vertex >= G.V())
+            throw new IllegalArgumentException("Vertex argument is outside its prescribed range");
+    }
+
+    private void doesVertexExist(Iterable<Integer> vertexSet) {
+        if (vertexSet == null) throw new IllegalArgumentException("Vertex Set is null");
+        for (Integer integer : vertexSet) {
+            if (integer == null) throw new IllegalArgumentException("Vertex Set contains a null item");
+        }
+    }
+
 
     // do unit testing of this class
     public static void main(String[] args) {
