@@ -39,13 +39,7 @@ public class SAP {
         doesVertexExist(vSet);
         doesVertexExist(wSet);
 
-        TreeMap<Integer, Integer> sapLengthMap = new TreeMap<>(); // TreeMap<Length, Ancestor>
-        for (int v : vSet) {
-            for (int w : wSet) {
-                sapLengthMap.put(length(v, w), ancestor(v, w));
-            }
-        }
-        return sapLengthMap.firstKey();
+        return sap(vSet, wSet)[0];
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
@@ -53,13 +47,7 @@ public class SAP {
         doesVertexExist(vSet);
         doesVertexExist(wSet);
 
-        TreeMap<Integer, Integer> sapLengthMap = new TreeMap<>(); // TreeMap<Length, Ancestor>
-        for (int v : vSet) {
-            for (int w : wSet) {
-                sapLengthMap.put(length(v, w), ancestor(v, w));
-            }
-        }
-        return sapLengthMap.firstEntry().getValue();
+        return sap(vSet, wSet)[1];
     }
 
     private void sap(int v, int w) {
@@ -77,8 +65,26 @@ public class SAP {
                 }
             }
         }
-        this.sapMap = new HashMap<>(); // Map< Pair<v,w>, Pair<Length, Ancestor>>
+        // Map< Pair<v,w>, Pair<Length, Ancestor>>
         this.sapMap.put(Map.entry(v, w), Map.entry(sapLength, sap));
+    }
+
+    private int[] sap(Iterable<Integer> v, Iterable<Integer> w) {
+        int sapLength = Integer.MAX_VALUE;
+        int sap = -1;
+        int[] vDistances = breadthFirstSearch(v);
+        int[] wDistances = breadthFirstSearch(w);
+
+        for (int i = 0; i < vDistances.length; i++) {
+            if (vDistances[i] != -1 && wDistances[i] != -1) {
+                int apLength = vDistances[i] + wDistances[i];
+                if (apLength < sapLength) {
+                    sapLength = apLength;
+                    sap = i;
+                }
+            }
+        }
+        return new int[]{sapLength, sap};
     }
 
     private int[] breadthFirstSearch(int v) {
@@ -104,6 +110,33 @@ public class SAP {
             distance++;
         }
         return vDistances;
+    }
+
+    private int[] breadthFirstSearch(Iterable<Integer> vSet) {
+        int distance = 0;
+        int[] vSetDistances = new int[this.G.V()];
+        Queue<Integer> queue = new LinkedList<>();
+        for (int v : vSet) {
+            queue.add(v);
+        }
+
+        // Initialize array with -1;
+        Arrays.fill(vSetDistances, -1);
+
+        while (!queue.isEmpty()) {
+            int n = queue.size();
+            for (int i = 0; i < n; i++) {
+                int curr = queue.remove();
+                vSetDistances[curr] = distance;
+                for (int next : this.G.adj(curr)) {
+                    if (vSetDistances[next] == -1) {
+                        queue.add(next);
+                    }
+                }
+            }
+            distance++;
+        }
+        return vSetDistances;
     }
 
     private void doesVertexExist(int vertex) {
