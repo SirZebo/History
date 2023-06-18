@@ -1,117 +1,99 @@
 import java.util.*;
 
 public class SAP {
-    Digraph G;
-    final Ancestors[] ancestors;
-    Map<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> sapLengthMap;
-
+    final Digraph G;
+    Map<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> sapMap; // Map< Pair<v,w>, Pair<Length, Ancestor>>
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
-        this.G = G.reverse();
-        sapLengthMap = new HashMap<>();
-        this.ancestors = topologicalSort(this.G);
+        this.G = G;
+        this.sapMap = new HashMap<>();
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        if (!sapLengthMap.containsKey(Map.entry(v, w))) {
-            ancestor(v, w);
+        if (!sapMap.containsKey(Map.entry(v, w))) {
+            sap(v, w);
         }
-        return sapLengthMap.get(Map.entry(v, w)).getValue();
+        return sapMap.get(Map.entry(v, w)).getKey(); // Map< Pair<v,w>, Pair<Length, Ancestor>>
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        Deque<Integer> ancestorsV = new ArrayDeque<>(ancestors[v].ancestors);
-        Deque<Integer> ancestorsW = new ArrayDeque<>(ancestors[w].ancestors);
-        int commonAncestor = -1;
-        // Remove queue until ancestors are different
-        while (ancestorsV.peek().equals(ancestorsW.peek())) {
-            commonAncestor = ancestorsV.poll();
-            ancestorsW.poll();
-            if (ancestorsV.isEmpty() || ancestorsW.isEmpty()) {
-                break;
-            }
+        if (!this.sapMap.containsKey(Map.entry(v, w))) {
+            sap(v, w);
         }
-        this.sapLengthMap.put(Map.entry(v, w), Map.entry(commonAncestor, commonAncestor == -1 ? -1 : ancestorsV.size() + ancestorsW.size() + 2));
-        return commonAncestor;
+        return this.sapMap.get(Map.entry(v, w)).getValue(); // Map< Pair<v,w>, Pair<Length, Ancestor>>
     }
 
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> vSet, Iterable<Integer> wSet) {
-        TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+
+        TreeMap<Integer, Integer> sapLengthMap = new TreeMap<>(); // TreeMap<Length, Ancestor>
         for (int v : vSet) {
             for (int w : wSet) {
-                if (!sapLengthMap.containsKey(Map.entry(v, w))) {
-                    ancestor(v, w);
-                }
-                treeMap.put(sapLengthMap.get(Map.entry(v, w)).getValue(), sapLengthMap.get(Map.entry(v, w)).getKey());
+                sapLengthMap.put(length(v, w), ancestor(v, w));
             }
         }
-        return treeMap.firstKey();
+        return sapLengthMap.firstKey();
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> vSet, Iterable<Integer> wSet) {
-        TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+        TreeMap<Integer, Integer> sapLengthMap = new TreeMap<>(); // TreeMap<Length, Ancestor>
         for (int v : vSet) {
             for (int w : wSet) {
-                if (!sapLengthMap.containsKey(Map.entry(v, w))) {
-                    ancestor(v, w);
-                }
-                treeMap.put(sapLengthMap.get(Map.entry(v, w)).getValue(), sapLengthMap.get(Map.entry(v, w)).getKey());
+                sapLengthMap.put(length(v, w), ancestor(v, w));
             }
         }
-        return treeMap.firstEntry().getValue();
+        return sapLengthMap.firstEntry().getValue();
     }
 
-    private Ancestors[] topologicalSort(Digraph G) {
-        int[] inDegrees = new int[G.V()];
-        Queue<Integer> queue = new LinkedList<>();
-        Ancestors[] ancestors = new Ancestors[G.V()];
+    private void sap(int v, int w) {
+        int sapLength = Integer.MAX_VALUE;
+        int sap = -1;
+        int[] vDistances = breadthFirstSearch(v);
+        int[] wDistances = breadthFirstSearch(w);
 
-        // Get outDegrees[]
-        for (int i = 0; i < G.V(); i++) {
-            inDegrees[i] = G.indegree(i);
-        }
-
-        for (int i = 0; i < inDegrees.length; i++) {
-            if (inDegrees[i] == 0) {
-                queue.add(i);
-                ancestors[i] = new Ancestors(new ArrayDeque<>());
+        for (int i = 0; i < vDistances.length; i++) {
+            if (vDistances[i] != -1 && wDistances[i] != -1) {
+                int apLength = vDistances[i] + wDistances[i];
+                if (apLength < sapLength) {
+                    sapLength = apLength;
+                    sap = i;
+                }
             }
         }
+        this.sapMap = new HashMap<>(); // Map< Pair<v,w>, Pair<Length, Ancestor>>
+        this.sapMap.put(Map.entry(v, w), Map.entry(sapLength, sap));
+    }
+
+    private int[] breadthFirstSearch(int v) {
+        int distance = 0;
+        int[] vDistances = new int[this.G.V()];
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(v);
+
+        // Initialize array with -1;
+        Arrays.fill(vDistances, -1);
 
         while (!queue.isEmpty()) {
             int n = queue.size();
             for (int i = 0; i < n; i++) {
-                int curr = queue.poll();
-                for (int next : G.adj(curr)) {
-                    inDegrees[next]--;
-                    if (inDegrees[next] == 0) {
+                int curr = queue.remove();
+                vDistances[curr] = distance;
+                for (int next : this.G.adj(curr)) {
+                    if (vDistances[next] == -1) {
                         queue.add(next);
-                        ancestors[next] = new Ancestors(new ArrayDeque<>(ancestors[curr].ancestors));
-                        ancestors[next].addAncestor(curr);
                     }
                 }
             }
+            distance++;
         }
-        return ancestors;
+        return vDistances;
     }
-
-    class Ancestors {
-        Deque<Integer> ancestors;
-
-        public Ancestors(Deque<Integer> ancestors) {
-            this.ancestors = ancestors;
-        }
-
-        public void addAncestor(int ancestor) {
-            ancestors.add(ancestor);
-        }
-    }
+    
 
     // do unit testing of this class
     public static void main(String[] args) {
