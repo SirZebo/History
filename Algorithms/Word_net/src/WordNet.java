@@ -68,14 +68,23 @@ public class WordNet {
         if (synsets == null) throw new IllegalArgumentException("Method readSynsets(): String synsets cannot be null!");
         In in = new In(synsets);
         this.idNounMap = new HashMap<>();
-
+        this.nounMap = new HashMap<>();
         while (in.hasNextLine()) {
             String line = in.readLine();
             String[] fields = line.split(","); // fields[0] = synset_id, fields[1] = synet, fields[2] = gloss -> not relevant;
             int id = Integer.parseInt(fields[0]);
+            this.idNounMap.put(id, fields[1]);
+
+            //noun may appear in more than 1 synsets. Eg: A = A alphabet, A blood type
             String[] nouns = fields[1].split(" ");
             for (String noun : nouns) {
-                this.idNounMap.put(id, noun);
+                if (nounMap.containsKey(noun)) {
+                    this.nounMap.get(noun).add(id);
+                } else {
+                    List<Integer> ids = new ArrayList<>();
+                    ids.add(id);
+                    this.nounMap.put(noun, ids);
+                }
             }
             this.count++;
         }
@@ -84,18 +93,14 @@ public class WordNet {
     private void readHypernyms(String hypernyms) {
         if (hypernyms == null) throw new IllegalArgumentException("readHypernyms: String hypernyms cannot be null!");
         In in = new In(hypernyms);
-        nounMap = new HashMap<>();
         while (in.hasNextLine()) {
             String line = in.readLine();
             String[] fields = line.split(",");
             int nounID = Integer.parseInt(fields[0]);
-            List<Integer> synsetsHypernyms = new ArrayList<>();
             for (int i = 1; i < fields.length; i++) {
                 int hypernymID = Integer.parseInt(fields[i]);
-                synsetsHypernyms.add(hypernymID);
                 this.digraph.addEdge(nounID, hypernymID);
             }
-            nounMap.put(idNounMap.get(nounID), synsetsHypernyms);
         }
     }
 
@@ -129,5 +134,6 @@ public class WordNet {
         String synsets = "https://coursera.cs.princeton.edu/algs4/assignments/wordnet/files/synsets.txt";
         String hypernyms = "https://coursera.cs.princeton.edu/algs4/assignments/wordnet/files/hypernyms.txt";
         WordNet wordnet = new WordNet(synsets, hypernyms);
+
     }
 }
